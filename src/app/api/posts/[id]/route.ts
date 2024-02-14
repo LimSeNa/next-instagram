@@ -1,9 +1,13 @@
-import {NextResponse} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {getServerSession} from "next-auth";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {getUserByUsername} from "@/service/user";
+import {getPost} from "@/service/posts";
 
-export async function GET() {
+type Context = {
+    params: {id: string};
+};
+
+export async function GET(request: NextRequest, context: Context) {
     const session = await getServerSession(authOptions);
     const user = session?.user;
 
@@ -12,7 +16,7 @@ export async function GET() {
     }
 
     return (
-        getUserByUsername(user.username)
-            .then(data => NextResponse.json(data))
+        getPost(context.params.id)
+            .then((data) => NextResponse.json(data))
     );
 }
